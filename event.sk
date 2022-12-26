@@ -1,0 +1,49 @@
+on first join:
+    set join message to "&2%player%&f 님이 처음 서버에 접속하셨습니다."
+    send title "&7브레멘음악대" with subtitle "&7브레멘음악대&0 서버에 어서 오세요!" to player for 5 seconds
+
+on join:
+    set join message to "&2%player%&f 님, 돌아오신 것을 환영합니다!"
+
+on quit:
+    set quit message to "&2%player%&f 님이 접속을 종료하셨습니다."
+
+on explode:
+    cancel event
+
+on place of tnt:
+    cancel event
+    set player's tool to air
+    message "&4TnT &f를 사용할 수 없습니다."
+
+on craft of tnt:
+    cancel event
+    close player's inventory
+    message "&4TnT &f를 만들 수 없습니다."
+
+on right click with gold ingot:
+    if name of player's tool is "&e[금화]":
+        cancel event
+        remove 1 of player's tool from player's tool
+        add 1 to {%player%.gold}
+        message: "금화에 추가되었습니다."
+        stop
+        
+on right click with iron ingot:
+    if name of player's tool is "&7[은화]":
+        cancel event
+        remove 1 of player's tool from player's tool
+        add 1 to {%player%.silver}
+        message: "은화에 추가되었습니다."
+        stop
+
+on right click with copper ingot:
+    if name of player's tool is "&6[동화]":
+        cancel event
+        remove 1 of player's tool from player's tool
+        add 1 to {%player%.copper}
+        message: "동화에 추가되었습니다."
+        stop
+
+
+

@@ -1,0 +1,3 @@
+on join:
+    set tab header to "%nl% &5브레멘음악대 %nl%" and footer to "%nl% &9%player% &0님, 서버에 어서 오세요! %nl% 현재 접속 중 : %number of all players% 명 %nl%" for player
+

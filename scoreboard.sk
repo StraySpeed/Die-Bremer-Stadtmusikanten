@@ -1,0 +1,32 @@
+# 스크립트 애드온 넣기!!
+# skRayFall
+
+every 1 secodns:
+    loop all players:
+        if {scoreboard.%loop-player%} is true:
+            wipe loop-player's sidebar
+            set name of sidebar of loop-player to "     [&7브레멘음악대&f]     "
+            set score "=========================" in sidebar of loop-player to 10
+            set score "> 이름" in sidebar of loop-player to 9
+            set score "%loop-player%" in sidebar of loop-player to 8
+            set score " " in sidebar of loop-player to 7
+            set score "> &e금화" in sidebar of loop-player to 6
+            set score "&0%{%loop-player%.gold}% &f원" in sidebar of loop-player to 5
+            set score "> &7은화" in sidebar of loop-player to 4
+            set score "&e%{%loop-player%.silver}% &f원" in sidebar of loop-player to 3
+            set score "> &6동화" in sidebar of loop-player to 2
+            set score "&e%{%loop-player%.copper}% &f원" in sidebar of loop-player to 1
+
+            stop
+
+command /지갑:
+    trigger:
+        if {scoreboard.%player%} is true:
+            set {scoreboard.%player%} to false
+            wipe player's sidebar
+            stop
+        
+        else:
+            set {scoreboard.%player%} to true
+            stop
+

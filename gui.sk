@@ -1,0 +1,8 @@
+command /메뉴:
+    trigger:
+        open chest with 5 named "브레멘음악대 서버 메뉴" to player
+        format slot 21 of player with compass named "&5상점 이동" with lore "신비한 상점" and "다른 차원의 상점으로 이동합니다." to close then run [execute op command "/spawn"]
+        format slot 22 of player with compass named "&5상점 이동" with lore "신비한 상점" and "다른 차원의 상점으로 이동합니다." to close then run [execute op command "/spawn"]
+        format slot 23 of player with compass named "&5상점 이동" with lore "신비한 상점" and "다른 차원의 상점으로 이동합니다." to close then run [execute op command "/spawn"]
+        format slot 24 of player with compass named "&5상점 이동" with lore "신비한 상점" and "다른 차원의 상점으로 이동합니다." to close then run [execute op command "/spawn"]
+        format slot 25 of player with compass named "&5상점 이동" with lore "신비한 상점" and "다른 차원의 상점으로 이동합니다." to close then run [execute op command "/spawn"]
