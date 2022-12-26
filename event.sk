@@ -25,7 +25,7 @@ on right click with gold ingot:
     if name of player's tool is "&e[금화]":
         cancel event
         remove 1 of player's tool from player's tool
-        add 1 to {%player%.gold}
+        add 1 to {gold.%player%}
         message: "금화에 추가되었습니다."
         stop
         
@@ -33,7 +33,7 @@ on right click with iron ingot:
     if name of player's tool is "&7[은화]":
         cancel event
         remove 1 of player's tool from player's tool
-        add 1 to {%player%.silver}
+        add 1 to {silver.%player%}
         message: "은화에 추가되었습니다."
         stop
 
@@ -41,7 +41,7 @@ on right click with copper ingot:
     if name of player's tool is "&6[동화]":
         cancel event
         remove 1 of player's tool from player's tool
-        add 1 to {%player%.copper}
+        add 1 to {copper.%player%}
         message: "동화에 추가되었습니다."
         stop
 

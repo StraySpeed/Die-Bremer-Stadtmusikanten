@@ -1,31 +1,31 @@
 command /환전 [<integer>] [<string>]:
     trigger:
         if arg 2 is "금화":
-            if arg 1 > {%player%.gold}:
+            if arg 1 > {gold.%player%}:
                 message: "금화가 부족합니다."
                 stop
             else:
-                subtract arg 1 from {%player%.gold}
+                subtract arg 1 from {gold.%player%}
                 give arg 1 gold ingot named "&e[금화]" with lore "빛나는 금화입니다." to player
                 message: "금화가 인출되었습니다."
                 stop
                 
         if arg 2 is "은화":
-            if arg 1 > {%player%.silver}:
+            if arg 1 > {silver.%player%}:
                 message: "은화가 부족합니다."
                 stop
             else:
-                subtract arg 1 from {%player%.silver}
+                subtract arg 1 from {silver.%player%}
                 give arg 1 iron ingot named "&7[은화]" with lore "빛나는 은화입니다." to player
                 message: "은화가 인출되었습니다."
                 stop
 
         if arg 2 is "동화":
-            if arg 1 > {%player%.copper}:
+            if arg 1 > {copper.%player%}:
                 message: "동화가 부족합니다."
                 stop
             else:
-                subtract arg 1 from {%player%.copper}
+                subtract arg 1 from {copper.%player%}
                 give arg 1 gold ingot named "&6[동화]" with lore "빛나는 동화입니다." to player
                 message: "동화가 인출되었습니다."
                 stop
