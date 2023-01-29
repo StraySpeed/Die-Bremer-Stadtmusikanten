@@ -1,39 +1,111 @@
-command /환전 [<integer>] [<string>]:
+# Skript 2.6.4
+
+command /exchange:
+    description: 환전 상점을 엽니다.
+    usage: /환전
+    aliases: 환전
+    executable by: players
     trigger:
-        if arg 2 is "금화":
-            if arg 1 > {gold.%player%}:
-                message: "금화가 부족합니다."
-                stop
-            else:
-                subtract arg 1 from {gold.%player%}
-                give arg 1 gold ingot named "&e[금화]" with lore "빛나는 금화입니다." to player
-                message: "금화가 인출되었습니다."
-                stop
-                
-        if arg 2 is "은화":
-            if arg 1 > {silver.%player%}:
-                message: "은화가 부족합니다."
-                stop
-            else:
-                subtract arg 1 from {silver.%player%}
-                give arg 1 iron ingot named "&7[은화]" with lore "빛나는 은화입니다." to player
-                message: "은화가 인출되었습니다."
-                stop
+        openStore(player)
 
-        if arg 2 is "동화":
-            if arg 1 > {copper.%player%}:
-                message: "동화가 부족합니다."
-                stop
-            else:
-                subtract arg 1 from {copper.%player%}
-                give arg 1 gold ingot named "&6[동화]" with lore "빛나는 동화입니다." to player
-                message: "동화가 인출되었습니다."
-                stop
-
-        if arg 2 is not set:
-            message: "/환전 [금액] [금화/은화/동화] 를 입력해 주세요."
+# 상점 event
+on inventory click:
+    # below Skript 1.13
+    # if inventory name of current inventory of player is "상점":
+    
+    # Skript 1.13+
+    if event-inventory's display name contains "상점":
+        # 환전하기
+        if event-item is emerald named "&9환전하기":
+            cancel event
+            openExchange(player)
+            stop
+        
+        # 인출하기
+        if event-item is diamond named "&a인출하기":
+            cancel event
+            openGive(player)
             stop
 
+        # 닫기
+        if event-item is wooden door:
+            cancel event
+            close player's inventory
+            stop
+                
+        stop
+
+    
+# 환전소 event
+on inventory click:
+    # below Skript 1.13
+    # if inventory name of current inventory of player is "환전소":
+
+    # Skript 1.13+
+    if event-inventory's display name contains "환전소":
+        # 닫기
+        if event-item is wooden door:
+            cancel event
+            close player's inventory
+            openStore(player)
+            stop
+            
+        stop
 
 
+# 인출 event
+on inventory click:
+    # below Skript 1.13
+    # if inventory name of current inventory of player is "은행":
 
+    # Skript 1.13+
+    if event-inventory's display name contains "은행":
+        # 금화
+        if event-item is gold ingot named "&e금화 환전":
+            cancel event
+            give 1 gold ingot named "&e[금화]" with lore "빛나는 &e금화&f입니다." to player
+            stop
+        
+        # 은화
+        if event-item is iron ingot named "&7은화 환전":
+            cancel event
+            give 1 iron ingot named "&7[은화]" with lore "빛나는 &7은화&f입니다." to player
+            stop
+        
+        # 동화
+        if event-item is copper ingot named "&6동화 환전":
+            cancel event
+            give 1 copper ingot named "&6[동화]" with lore "빛나는 &6동화&f입니다." to player
+            stop
+    
+        # 닫기
+        if event-item is wooden door:
+            cancel event
+            close player's inventory
+            openStore(player)
+            stop
+
+        stop
+
+# 상점을 여는 내부 함수
+function openStore(p: player):
+    open chest with 1 row named "상점" to {_p}
+    set slot 1 of current inventory of {_p} to emerald named "&9환전하기"
+    set slot 5 of current inventory of {_p} to diamond named "&a인출하기"
+    set slot 8 of current inventory of {_p} to wooden door named "&f상점 나가기"
+
+
+# 환전하기 상점을 여는 내부 함수
+function openExchange(p: player):
+    open chest with 1 row named "환전소" to {_p}
+    set slot 8 of current inventory of {_p} to wooden door named "&f환전소 나가기"
+
+
+# 은행 상점을 여는 내부 함수
+function openGive(p: player):
+    open chest with 1 row named "은행" to {_p}
+    set slot 1 of current inventory of {_p} to gold ingot named "&e금화 환전"
+    set slot 2 of current inventory of {_p} to iron ingot named "&7은화 환전"
+    set slot 3 of current inventory of {_p} to copper ingot named "&6동화 환전"
+    set slot 8 of current inventory of {_p} to wooden door named "&f은행 나가기"
+    
