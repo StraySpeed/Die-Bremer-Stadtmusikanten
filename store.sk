@@ -1,0 +1,174 @@
+# Skript 2.6.4
+
+command /exchange:
+    description: 환전 상점을 엽니다.
+    usage: /환전
+    aliases: 환전
+    executable by: players
+    trigger:
+        openStore(player)
+
+# 상점 event
+on inventory click:
+    # below Skript 1.13
+    # if inventory name of current inventory of player is "상점":
+    
+    # Skript 1.13+
+    if event-inventory's display name contains "상점":
+        # 환전하기
+        if event-item is emerald named "&9환전하기":
+            cancel event
+            openExchange(player)
+            stop
+        
+        # 인출하기
+        if event-item is diamond named "&a인출하기":
+            cancel event
+            openGive(player)
+            stop
+
+        # 닫기
+        if event-item is wooden door:
+            cancel event
+            close player's inventory
+            stop
+                
+        else:
+            cancel event
+            stop
+        
+        stop
+
+    
+# 환전소 event
+on inventory click:
+    # below Skript 1.13
+    # if inventory name of current inventory of player is "환전소":
+
+    # Skript 1.13+
+    if event-inventory's display name contains "환전소":
+        # 금화 판매
+        if name of event-item contains "&e[금화]":
+            cancel event
+            set {_itemcount} to amount of gold ingots named "&e[금화]" with lore "빛나는 &e금화" in event-inventory
+            remove {_itemcount} of gold ingots named "&e[금화]" with lore "빛나는 &e금화" from player's inventory
+            add {_itemcount} to {gold.%player%}
+            message "%{_itemcount}% 개의 &e금화&f가 충전되었습니다."
+            stop
+
+        # 은화 판매
+        else if name of event-item contains "&7[은화]":
+            cancel event
+            set {_itemcount} to amount of iron ingots named "&7[은화]" with lore "빛나는 &7은화" in event-inventory
+            remove {_itemcount} of iron ingots named "&7[은화]" with lore "빛나는 &7은화" from player's inventory
+            add {_itemcount} to {silver.%player%}
+            message "%{_itemcount}% 개의 &7은화&f가 충전되었습니다."
+            stop
+
+        # 동화 판매
+        else if name of event-item contains "&6[동화]":
+            cancel event
+            set {_itemcount} to amount of copper ingots named "&6[동화]" with lore "빛나는 &6동화" in event-inventory
+            remove {_itemcount} of copper ingots named "&6[동화]" with lore "빛나는 &6동화" from player's inventory
+            add {_itemcount} to {copper.%player%}
+            message "%{_itemcount}% 개의 &6동화&f가 충전되었습니다."
+            stop
+
+        # 닫기
+        else if event-item is wooden door:
+            cancel event
+            close player's inventory
+            openStore(player)
+            stop
+
+        # 기타
+        else:
+            message "&c판매할 수 없는 물건입니다."
+            cancel event
+            stop
+
+        stop
+
+
+# 인출 event
+on inventory click:
+    # below Skript 1.13
+    # if inventory name of current inventory of player is "은행":
+
+    # Skript 1.13+
+    if event-inventory's display name contains "은행":
+        # 금화
+        if event-item is gold ingot named "&e금화 환전":
+            cancel event
+            if {gold.%player%} > 1:
+                subtract 1 from {gold.%player%}
+                give 1 gold ingot named "&e[금화]" with lore "빛나는 &e금화" to player
+                message "금화가 인출되었습니다."
+                stop
+
+            else:
+                message "금화가 부족합니다."
+                stop
+
+            stop
+        
+        # 은화
+        if event-item is iron ingot named "&7은화 환전":
+            cancel event
+            if {silver.%player%} > 1:
+                subtract 1 from {silver.%player%}
+                give 1 iron ingot named "&7[은화]" with lore "빛나는 &7은화" to player
+                message "은화가 인출되었습니다."
+                stop
+            
+            else:
+                message "은화가 부족합니다."
+                stop
+
+            stop
+        
+        # 동화
+        if event-item is copper ingot named "&6동화 환전":
+            cancel event
+            if {copper.%player%} > 1:
+                subtract 1 from {copper.%player%}
+                give 1 copper ingot named "&6[동화]" with lore "빛나는 &6동화" to player
+                message "동화가 인출되었습니다."
+                stop
+
+            else:
+                message "동화가 부족합니다."
+                stop
+
+            stop
+    
+        # 닫기
+        if event-item is wooden door:
+            cancel event
+            close player's inventory
+            openStore(player)
+            stop
+
+        stop
+
+# 상점을 여는 내부 함수
+function openStore(p: player):
+    open chest with 1 row named "상점" to {_p}
+    set slot 1 of current inventory of {_p} to emerald named "&9환전하기" with lore "&f가진 금액을 화폐로 교환합니다."
+    set slot 5 of current inventory of {_p} to diamond named "&a인출하기" with lore "&f가진 화폐를 금액으로 저금합니다."
+    set slot 8 of current inventory of {_p} to wooden door named "&f상점 나가기" with lore "&f상점에서 나갑니다."
+
+
+# 환전하기 상점을 여는 내부 함수
+function openExchange(p: player):
+    open chest with 1 row named "환전소" to {_p}
+    set slot 8 of current inventory of {_p} to wooden door named "&f환전소 나가기"
+
+
+# 은행 상점을 여는 내부 함수
+function openGive(p: player):
+    open chest with 1 row named "은행" to {_p}
+    set slot 1 of current inventory of {_p} to gold ingot named "&e금화 환전" with lore "&e금화&f를 인출합니다."
+    set slot 2 of current inventory of {_p} to iron ingot named "&7은화 환전" with lore "&7은화&f를 인출합니다."
+    set slot 3 of current inventory of {_p} to copper ingot named "&6동화 환전" with lore "&6동화&f를 인출합니다."
+    set slot 8 of current inventory of {_p} to wooden door named "&f은행 나가기"
