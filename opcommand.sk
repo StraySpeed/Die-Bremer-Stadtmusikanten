@@ -1,0 +1,37 @@
+# Skript 2.6.4
+
+command /charge:
+    description: 지갑에 돈을 충전하는 op 커맨드
+    usage: /charge
+    aliases: charge
+    executable by: players
+    permission: op
+
+    trigger:
+        add 10 to {gold.%player%}
+        add 10 to {silver.%player%}
+        add 10 to {copper.%player%}
+        message "금액이 충전되었습니다."
+
+command /walletset [<player>] [<string>] [<int>]:
+    description: 특정 유저의 지갑 값을 변경합니다.
+    usage: /walletset StraySpeed gold|silver|copper|all 0
+    aliases: walletset
+    executable by: players
+    permission: op
+
+    trigger:
+        set {_player} to arg 1
+        set {_var} to arg 2
+        set {_val} to arg 3
+        if {_var} == "all":
+            set {gold.%{_player}%} to {_val}
+            set {silver.%{_player}%} to {_val}
+            set {copper.%{_player}%} to {_val}
+            stop
+            message "&2%{_player}% &f의 지갑이 초기화되었습니다."
+        else:
+            set {%{_var}%.%{_player}%} to {_val}
+            message "&2%{_player}% &f의 &c%{_var}% &f지갑이 초기화되었습니다."
+            stop
+        

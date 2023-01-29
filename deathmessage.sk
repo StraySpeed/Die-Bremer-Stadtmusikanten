@@ -1,5 +1,0 @@
-on death of player:
-    if attacker is player:
-        set the death message to "%attacker% 님이 &4%victim%&f 님을 죽였습니다."
-        stop
-    
