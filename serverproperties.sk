@@ -1,3 +1,26 @@
-on join:
-    set tab header to "%nl% &5브레멘음악대 %nl%" and footer to "%nl% &9%player% &0님, 서버에 어서 오세요! %nl% 현재 접속 중 : %number of all players% 명 %nl%" for player
+# Skript 2.6.4
+# skRayFall 1.9.28
 
+# 서버 첫 접속 시 메시지 설정
+on first join:
+    set join message to "&9%player%&f 님이 처음 서버에 접속하셨습니다."
+    send title "&5브레멘음악대♫" with subtitle "&5브레멘음악대♫&f 서버에 어서 오세요!" to player for 5 seconds
+    set {gold.%player%} to 0
+    set {silver.%player%} to 0
+    set {copper.%player%} to 0
+
+# 서버에 접속 시 메시지 설정
+on join:
+    set join message to "&2%player%&f 님, 돌아오신 것을 환영합니다!"
+    set tab header to "%nl% &5브레멘음악대♫ %nl%" and footer to "%nl% &9%player% &f님, 서버에 어서 오세요! %nl% 현재 접속 중 : %number of all players% 명 %nl%" for player
+
+# 접속 종료시 메시지 설정
+on quit:
+    set quit message to "&2%player%&f 님이 접속을 종료하셨습니다."
+
+# 플레이어 사망 시 메시지 설정
+on death of player:
+    if attacker is player:
+        set the death message to "%attacker% 님이 &4%victim%&f 님을 죽였습니다."
+        stop
+    
