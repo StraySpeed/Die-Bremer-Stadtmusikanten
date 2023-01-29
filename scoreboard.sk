@@ -1,5 +1,5 @@
 # Skript 2.6.4
-# skRayFall 1.19.28
+# skRayFall 1.9.28
 
 every 1 seconds:
     loop all players:
