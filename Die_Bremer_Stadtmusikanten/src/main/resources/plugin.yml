@@ -1,3 +1,19 @@
 name: Die_Bremer_Stadtmusikanten   #플러그인 이름
 version: 1.0        #플러그인 버전
 main: die.bremer.stadtmusikanten.Dbs   #플러그인 패키지 이름.진입점 클래스 이름
+author: StraySpeed
+
+commands:
+  charge:
+    description: 지갑에 돈을 충전하는 op 커맨드
+    usage: /charge
+    aliases: [charge, 충전]
+    permisson: op
+    permission-message: You do not have permission to use this command.
+
+  walletset:
+    description: 플레이어의 지갑 데이터를 바꾸는 op 커맨드
+    usage: /walletset <player> <gold|silver|copper|all> <value>
+    aliases: [setwallet]
+    permisson: op
+    permission-message: You do not have permission to use this command.
