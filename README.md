@@ -1,5 +1,9 @@
 # Die-Bremer-Stadtmusikanten
 For Die Bremer Stadtmusikanten MC Server
+## July 3, 2023
+Now Re-developing
+
+Skript -> Java
 
 ## Beta Img Below
 **January 30, 2023**
