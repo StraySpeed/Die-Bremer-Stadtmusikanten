@@ -30,11 +30,11 @@ public class PlayerScoreboard {
         score6.setScore(6);
         Score score5 = objective.getScore(" ");
         score5.setScore(5);
-        Score score4 = objective.getScore("§e금화 §f" + wallet.getGold(id) + "원");
+        Score score4 = objective.getScore("> §e금화 §f" + wallet.getGold(id) + "원");
         score4.setScore(4);
-        Score score3 = objective.getScore("§7은화 §f" + wallet.getSilver(id) + "원");
+        Score score3 = objective.getScore("> §7은화 §f" + wallet.getSilver(id) + "원");
         score3.setScore(3);
-        Score score2 = objective.getScore("§6동화 §f" + wallet.getCopper(id) + "원");
+        Score score2 = objective.getScore("> §6동화 §f" + wallet.getCopper(id) + "원");
         score2.setScore(2);
         Score score1 = objective.getScore("  ");
         score1.setScore(1);
