@@ -11,7 +11,8 @@ plugins {
 }
 
 group 'die.bremer.stadtmusikanten'
-version '1.0.0'
+version '1.0.0' // Plugin Version
+sourceCompatibility '18'    // Use Java 18 for Compatibility
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -31,6 +32,7 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
 }
 
+// Use UTF-8 for Korean
 compileJava.options.encoding = 'UTF-8'
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
