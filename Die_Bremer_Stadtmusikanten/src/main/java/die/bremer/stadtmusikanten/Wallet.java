@@ -94,6 +94,8 @@ public class Wallet implements Serializable {
 
 class ChargeCommand implements CommandExecutor{
     private Wallet wallet;
+    private final String errorMsg = "§c사용법: /charge (Player-Only)";
+    private final String permMsg = "§c권한이 없습니다.";
     ChargeCommand(Wallet wallet) {
         this.wallet = wallet;
     }
@@ -101,6 +103,10 @@ class ChargeCommand implements CommandExecutor{
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {  //명령어 사용자가 플레이어인 경우
             Player player = (Player)sender; //명령어 사용자 객체를 플레이어 객체로 변환할 수 있음
+            if (!player.isOp()) {
+                player.sendMessage(permMsg);
+                return false;
+            }
 
             UUID id = player.getUniqueId(); // ID 가져오기
             wallet.putGold(id, wallet.getGold(id) + 10);
@@ -108,10 +114,11 @@ class ChargeCommand implements CommandExecutor{
             wallet.putCopper(id, wallet.getCopper(id) + 10);
             
             player.sendMessage("금액이 충전되었습니다.");    //사용자에게 메시지 발신
+            PlayerScoreboard.updateScoreboard(player, wallet);
             return true;    //true값을 반환하면 명령어가 성공한 것으로 간주
         }
         else if(sender instanceof ConsoleCommandSender) {   //명령어 사용자가 콘솔인 경우
-            sender.sendMessage("콘솔에서는 이 명령어를 실행할 수 없습니다.");
+            sender.sendMessage(errorMsg);
             return false;   //false값을 반환하면 명령어가 실패한 것으로 간주
         }
         return false;   //false값을 반환하면 명령어가 실패한 것으로 간주
@@ -121,12 +128,18 @@ class ChargeCommand implements CommandExecutor{
 class WalletSetCommand implements CommandExecutor {
     private Wallet wallet;
     private final String errorMsg = "§c사용법: /walletset <player> <gold|silver|copper|all> <value>";
+    private final String permMsg = "§c권한이 없습니다.";
     private final String[] walletValue = new String[]{"gold", "silver", "copper", "all"};
     WalletSetCommand(Wallet wallet) {
         this.wallet = wallet;
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player && !sender.isOp()) {
+            sender.sendMessage(permMsg);
+            return false;
+        }
+
         // 조건 확인
         if (args.length != 3){
             sender.sendMessage(errorMsg);
@@ -140,17 +153,17 @@ class WalletSetCommand implements CommandExecutor {
         // 조건이 안맞으면 errorMsg출력
         if (player == null | !(Arrays.asList(walletValue).contains(key))) {
             sender.sendMessage(errorMsg);
-            return false;
+            return false;   //false값을 반환하면 명령어가 실패한 것으로 간주
         }
         
         // wallet 데이터 조정
-        if (key == "gold") {
+        if (key.equals("gold")) {
             wallet.putGold(player.getUniqueId(), value);
         }
-        else if (key == "silver") {
+        else if (key.equals("silver")) {
             wallet.putSilver(player.getUniqueId(), value);
         }
-        else if (key == "copper") {
+        else if (key.equals("copper")) {
             wallet.putCopper(player.getUniqueId(), value);
         }
         else {
@@ -162,6 +175,10 @@ class WalletSetCommand implements CommandExecutor {
         wallet.saveWallet();
 
         sender.sendMessage("§2" + player.getName() + "§f 님의 \"§e" + key + "\"§f 값을 §5" + Integer.toString(value) + "§f 로 조정하였습니다.");
+        if ((Player)sender != player) { // 대상이 자기 자신이 아닐 경우 통보하기
+            player.sendMessage("관리자가 §2" + player.getName() + "§f 님의 \"§e" + key + "\"§f 값을 §5" + Integer.toString(value) + "§f 로 조정하였습니다.");
+        }
+        PlayerScoreboard.updateScoreboard(player, wallet);  // 대상자의 스코어보드 업데이트
         return true;
     }
 }

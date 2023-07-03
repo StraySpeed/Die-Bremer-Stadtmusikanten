@@ -6,14 +6,24 @@ author: StraySpeed
 commands:
   charge:
     description: 지갑에 돈을 충전하는 op 커맨드
-    usage: /charge
-    aliases: [charge, 충전]
-    permisson: op
+    #usage: /charge
+    aliases: [충전]
+    permisson: operator.wallet
     permission-message: You do not have permission to use this command.
 
   walletset:
     description: 플레이어의 지갑 데이터를 바꾸는 op 커맨드
-    usage: /walletset <player> <gold|silver|copper|all> <value>
+    #usage: /walletset <player> <gold|silver|copper|all> <value>
     aliases: [setwallet]
-    permisson: op
+    permisson: operator.wallet
     permission-message: You do not have permission to use this command.
+
+permissions:
+  operator.*:
+    description: operator wildcard
+    children:
+      operator.command: true
+
+  operator.wallet:
+    description: 지갑 관리 권한
+    default: op
