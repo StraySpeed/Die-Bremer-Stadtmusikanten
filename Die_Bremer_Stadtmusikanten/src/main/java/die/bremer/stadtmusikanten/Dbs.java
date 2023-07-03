@@ -73,6 +73,7 @@ class PlayerEventHandler implements Listener {
             player.sendMessage("§9" + player.getName() + "§f 님, 돌아오신 것을 환영합니다 !");
         }
         else {
+            player.sendTitle("&5브레멘음악대♫", "&5브레멘음악대♫&f 서버에 어서 오세요!", 10, 70, 20);
             player.sendMessage("§2" + player.getName() + "§f 님이 처음 서버에 접속하셨습니다.");
             //wallet.addPlayer(player.getUniqueId());
         }
