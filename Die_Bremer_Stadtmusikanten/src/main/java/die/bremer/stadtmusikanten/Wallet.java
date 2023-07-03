@@ -108,7 +108,6 @@ class ChargeCommand implements CommandExecutor{
             wallet.putCopper(id, wallet.getCopper(id) + 10);
             
             player.sendMessage("금액이 충전되었습니다.");    //사용자에게 메시지 발신
-            player.sendMessage(Integer.toString(wallet.getGold(id)));
             return true;    //true값을 반환하면 명령어가 성공한 것으로 간주
         }
         else if(sender instanceof ConsoleCommandSender) {   //명령어 사용자가 콘솔인 경우
