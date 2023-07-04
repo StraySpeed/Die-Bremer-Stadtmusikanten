@@ -49,6 +49,7 @@ public class Dbs extends JavaPlugin {
     private void _loadCommands() {
         getCommand("charge").setExecutor(new ChargeCommand(wallet));
         getCommand("walletset").setExecutor(new WalletSetCommand(wallet));
+        getCommand("exchange").setExecutor(new StoreGUI(wallet, this));
     }
 
     /** Events를 load */

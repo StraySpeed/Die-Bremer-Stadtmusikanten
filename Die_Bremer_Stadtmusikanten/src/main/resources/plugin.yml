@@ -18,6 +18,11 @@ commands:
     permisson: operator.wallet
     permission-message: You do not have permission to use this command.
 
+  exchange:
+    description: 환전 상점을 여는 커맨드
+    #usage: /walletset <player> <gold|silver|copper|all> <value>
+    aliases: [환전]
+
 permissions:
   operator.*:
     description: operator wildcard
