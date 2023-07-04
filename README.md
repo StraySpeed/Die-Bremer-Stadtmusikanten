@@ -15,4 +15,4 @@ Skript -> Java
 
 ### For more information
 https://kohmyungjun.tistory.com/m/1
-
+https://kohmyungjun.tistory.com/m/2
