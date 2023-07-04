@@ -152,7 +152,7 @@ class WalletSetCommand implements CommandExecutor {
 
         // 조건이 안맞으면 errorMsg출력
         // 대상 플레이어가 없거나 지갑 값이 아닌 경우 실패
-        if (player == null | !(Arrays.asList(walletValue).contains(key))) {
+        if (player == null || !(Arrays.asList(walletValue).contains(key))) {
             sender.sendMessage(errorMsg);
             return false;   //false값을 반환하면 명령어가 실패한 것으로 간주
         }
