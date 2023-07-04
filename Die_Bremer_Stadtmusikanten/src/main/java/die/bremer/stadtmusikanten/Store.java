@@ -1,10 +1,7 @@
 package die.bremer.stadtmusikanten;
 
-import java.util.Arrays;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,19 +14,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-public class Store {
-    
-}
 
 class StoreGUI implements Listener, CommandExecutor {
     private final Inventory inv;
     private Wallet wallet;
-    private final ItemStack GOLD = createGuiItem(Material.GOLD_INGOT, "§e[금화]", "빛나는 §e금화", "화폐로 사용됩니다.");
-    private final ItemStack SILVER = createGuiItem(Material.IRON_INGOT, "§7[은화]", "빛나는 §7은화", "화폐로 사용됩니다.");
-    private final ItemStack COPPER = createGuiItem(Material.COPPER_INGOT, "§6[동화]", "빛나는 §6동화", "화폐로 사용됩니다.");
-    private final ItemStack EXIT = createGuiItem(Material.ACACIA_DOOR, "나가기", "현재 메뉴를 나갑니다.");
+    private final ItemStack GOLD = Money.GOLD;
+    private final ItemStack SILVER = Money.SILVER;
+    private final ItemStack COPPER = Money.COPPER;
+    private final ItemStack EXIT = Money.EXIT;
 
     public StoreGUI() {
         // Create a new inventory, with no owner (as this isn't a real inventory), a size of nine, called example
@@ -51,20 +44,6 @@ class StoreGUI implements Listener, CommandExecutor {
         inv.setItem(3, COPPER);
         inv.setItem(8, EXIT);
     }   
-
-    // Nice little method to create a gui item with a custom name, and description
-    protected ItemStack createGuiItem(final Material material, final String name, final String... lore) {
-        final ItemStack item = new ItemStack(material, 1);
-        final ItemMeta meta = item.getItemMeta();
-
-        // Set the name of the item
-        meta.setDisplayName(name);
-
-        // Set the lore of the item
-        meta.setLore(Arrays.asList(lore));
-        item.setItemMeta(meta);
-        return item;
-    }
 
     /** 환전 상점 들어가는 method */
     @Override
