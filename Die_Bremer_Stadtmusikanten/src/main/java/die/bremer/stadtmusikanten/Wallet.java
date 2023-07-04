@@ -114,7 +114,6 @@ class ChargeCommand implements CommandExecutor{
             wallet.putCopper(id, wallet.getCopper(id) + 10);
             
             player.sendMessage("금액이 충전되었습니다.");    //사용자에게 메시지 발신
-            wallet.saveWallet();
             PlayerScoreboard.updateScoreboard(player, wallet);
             return true;    //true값을 반환하면 명령어가 성공한 것으로 간주
         }
@@ -152,6 +151,7 @@ class WalletSetCommand implements CommandExecutor {
         int value = Integer.parseInt(args[2]);
 
         // 조건이 안맞으면 errorMsg출력
+        // 대상 플레이어가 없거나 지갑 값이 아닌 경우 실패
         if (player == null | !(Arrays.asList(walletValue).contains(key))) {
             sender.sendMessage(errorMsg);
             return false;   //false값을 반환하면 명령어가 실패한 것으로 간주
@@ -172,8 +172,6 @@ class WalletSetCommand implements CommandExecutor {
             wallet.putSilver(player.getUniqueId(), value);
             wallet.putCopper(player.getUniqueId(), value);
         }
-        // wallet 데이터 저장하기
-        wallet.saveWallet();
 
         sender.sendMessage("§2" + player.getName() + "§f 님의 \"§e" + key + "\"§f 값을 §5" + Integer.toString(value) + "§f 로 조정하였습니다.");
         if ((Player)sender != player) { // 대상이 자기 자신이 아닐 경우 통보하기

@@ -39,5 +39,8 @@ public class PlayerScoreboard {
         Score score1 = objective.getScore("  ");
         score1.setScore(1);
         player.setScoreboard(board);
+        
+        // 지갑 저장을 수행하기
+        wallet.saveWallet();
     }
 }
