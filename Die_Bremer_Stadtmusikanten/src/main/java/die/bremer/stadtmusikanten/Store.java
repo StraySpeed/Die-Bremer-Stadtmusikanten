@@ -1,6 +1,7 @@
 package die.bremer.stadtmusikanten;
 
 import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -10,8 +11,10 @@ import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -112,7 +115,7 @@ class StoreGUI implements Listener, CommandExecutor {
                 player.sendMessage(COPPER.getItemMeta().getDisplayName() + " §f이(가) 인출되었습니다.");
             }
             else {
-                player.sendMessage(SILVER.getItemMeta().getDisplayName() + " §f잔액이 부족합니다.");
+                player.sendMessage(COPPER.getItemMeta().getDisplayName() + " §f잔액이 부족합니다.");
             }
         }
         else if (item.equals(EXIT)) {
@@ -127,6 +130,33 @@ class StoreGUI implements Listener, CommandExecutor {
     public void onInventoryClick(final InventoryDragEvent e) {
         if (e.getInventory().equals(inv)) {
           e.setCancelled(true);
+        }
+    }
+
+    /** 화폐를 들고 사용 시 충전하는 method */
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent e) {
+        if (e.getAction() != Action.RIGHT_CLICK_BLOCK && e.getAction() != Action.RIGHT_CLICK_AIR) return;
+        ItemStack holdingItem = e.getPlayer().getInventory().getItemInMainHand();
+        UUID id = e.getPlayer().getUniqueId();
+        if (holdingItem == null) return;
+        if (holdingItem.isSimilar(Money.GOLD)) {
+            this.wallet.putGold(id, this.wallet.getGold(id) + 1);
+            e.getPlayer().sendMessage(holdingItem.getItemMeta().getDisplayName() + "§f 가 충전되었습니다.");
+            holdingItem.setAmount(holdingItem.getAmount() - 1);
+            PlayerScoreboard.updateScoreboard(e.getPlayer(), this.wallet);
+        }
+        else if (holdingItem.isSimilar(Money.SILVER)) {
+            this.wallet.putSilver(id, this.wallet.getSilver(id) + 1);
+            e.getPlayer().sendMessage(holdingItem.getItemMeta().getDisplayName() + "§f 가 충전되었습니다.");
+            holdingItem.setAmount(holdingItem.getAmount() - 1);
+            PlayerScoreboard.updateScoreboard(e.getPlayer(), this.wallet);
+        }
+        else if (holdingItem.isSimilar(Money.COPPER)) {
+            this.wallet.putCopper(id, this.wallet.getCopper(id) + 1);
+            e.getPlayer().sendMessage(holdingItem.getItemMeta().getDisplayName() + "§f 가 충전되었습니다.");
+            holdingItem.setAmount(holdingItem.getAmount() - 1);
+            PlayerScoreboard.updateScoreboard(e.getPlayer(), this.wallet);
         }
     }
 }
