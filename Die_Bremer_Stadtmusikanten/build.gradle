@@ -12,7 +12,9 @@ plugins {
 
 group 'die.bremer.stadtmusikanten'
 version '1.0.0' // Plugin Version
-sourceCompatibility '18'    // Use Java 18 for Compatibility
+
+// 1.16.5 기준 자바 8을 사용함
+sourceCompatibility '8'
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -29,7 +31,7 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.1-jre'
-    compileOnly 'org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
 }
 
 // Use UTF-8 for Korean

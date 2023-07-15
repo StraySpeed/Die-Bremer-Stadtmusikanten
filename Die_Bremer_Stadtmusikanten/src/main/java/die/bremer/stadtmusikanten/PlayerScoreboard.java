@@ -3,7 +3,6 @@ package die.bremer.stadtmusikanten;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.RenderType;
@@ -20,7 +19,7 @@ public class PlayerScoreboard {
         // 스코어보드 한 번 초기화하기
         player.setScoreboard(manager.getNewScoreboard());
 
-        Objective objective = board.registerNewObjective(" [§5브레멘음악대♫§f] ", Criteria.DUMMY, " [§5브레멘음악대♫§f] ", RenderType.INTEGER);
+        Objective objective = board.registerNewObjective(" [§5브레멘음악대♫§f] ", "DUMMY", " [§5브레멘음악대♫§f] ", RenderType.INTEGER);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         Score score8 = objective.getScore("=================");
         score8.setScore(8);
