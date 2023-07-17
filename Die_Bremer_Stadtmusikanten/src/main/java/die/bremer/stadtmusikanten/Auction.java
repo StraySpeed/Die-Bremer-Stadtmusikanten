@@ -213,6 +213,7 @@ public class Auction implements Listener, CommandExecutor {
     public void initializeItems() {
         inv.clear();
         int cnt = 0;
+        if (auction.getAuctionItems() == null) return;
         for (AuctionItem items: auction.getAuctionItems()) {
             inv.setItem(cnt, items.returnItem());
             cnt += 1;
