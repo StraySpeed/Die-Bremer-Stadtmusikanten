@@ -23,6 +23,7 @@ public class Dbs extends JavaPlugin {
         getLogger().info("Plugin Enabled.");
         _loadCommands();
         _loadEvents();
+        auction.loadAuctionItems();
     }
 
     /**
@@ -44,6 +45,7 @@ public class Dbs extends JavaPlugin {
     public void onDisable(){
         getLogger().info("Plugin Disabled.");
         wallet.saveWallet();
+        auction.saveAuction();
     }
 
     /** Commands를 load */

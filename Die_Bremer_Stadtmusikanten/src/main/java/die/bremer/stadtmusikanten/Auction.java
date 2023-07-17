@@ -1,5 +1,7 @@
 package die.bremer.stadtmusikanten;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -21,15 +24,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.io.BukkitObjectInputStream;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 /** 경매장 정보를 저장하는 클래스 */
 class AuctionFile implements Serializable {
     /** 경매장 파일 이름 */
     static final private String fileName = "Auction.ser";
-    private ArrayList<AuctionItem> AuctionList = new ArrayList<>();
+    transient private ArrayList<AuctionItem> AuctionList = new ArrayList<>();
+    private ArrayList<SaveAuctionItem> saveList = new ArrayList<>();
     static final int MAXSIZE = 9 * 6;
     private int itemCount = 0;
 
@@ -52,11 +60,28 @@ class AuctionFile implements Serializable {
         return w;
     }
 
+    /** 경매장 아이템 불러오는 method */
+    public void loadAuctionItems() {
+        AuctionList = new ArrayList<>();
+        for (SaveAuctionItem sItem: saveList) {
+            try {
+                AuctionList.add(new AuctionItem(sItem.playerId, sItem.player, SaveAuctionItem.itemStackFromBase64(sItem.itemStack), sItem.price));
+            }
+            catch (IOException e) {
+                continue;
+            }
+        }
+    }
+
     /** 경매장을 저장하는 method */
     public void saveAuction() {
+        saveList = new ArrayList<>();
         try {
             FileOutputStream fos = new FileOutputStream(fileName);
             ObjectOutputStream oStream = new ObjectOutputStream(fos);
+            for (AuctionItem aItem: AuctionList) {
+                saveList.add(new SaveAuctionItem(aItem.getPlayerId(), aItem.getPlayer(), SaveAuctionItem.itemStackToBase64(aItem.getItem()), aItem.getPrice()));
+            }
             oStream.writeObject(this);
             oStream.close();
         } catch (IOException e) {
@@ -91,17 +116,60 @@ class AuctionFile implements Serializable {
         }
         saveAuction();
     }
+
+    /** ItemStack을 Serialize할 수 없어서 base64로 저장하고 불러올 계획 */
+    private class SaveAuctionItem implements Serializable {
+        UUID playerId;
+        String itemStack;
+        int price;
+        String player;
+
+        SaveAuctionItem(UUID playerId, String player, String itemStack, int price) {
+            this.playerId = playerId;
+            this.itemStack = itemStack;
+            this.price = price;
+            this.player = player;
+        }
+
+        static String itemStackToBase64(ItemStack item) throws IllegalStateException {
+            try {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+
+                dataOutput.writeObject(item);
+                dataOutput.close();
+                return Base64Coder.encodeLines(outputStream.toByteArray());
+            } catch (Exception e) {
+                throw new IllegalStateException("Unable to save itemstack.", e);
+            }
+        }
+
+        static ItemStack itemStackFromBase64(String data) throws IOException {
+            try {
+                ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(data));
+                BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
+                ItemStack item = (ItemStack) dataInput.readObject();
+                dataInput.close();
+                return item;
+            } catch (ClassNotFoundException e) {
+                throw new IOException("Unable to decode class type.", e);
+            }
+        }
+
+    }
 }
 
 /** 경매장 아이템을 가리키는 클래스 */
 class AuctionItem {
-    private Player player;
+    private UUID playerId;
     private ItemStack item;
     private int price;
-    public AuctionItem(Player player, ItemStack item, int price) {
-        this.player = player;
+    private String player;
+    public AuctionItem(UUID playerId, String player, ItemStack item, int price) {
+        this.playerId = playerId;
         this.item = item;
         this.price = price;
+        this.player = player;
     }
 
     /** 개수 임의 조정 */
@@ -124,8 +192,8 @@ class AuctionItem {
         return createItem();
     }
 
-    public Player getPlayer() {
-        return player;
+    public UUID getPlayerId() {
+        return playerId;
     }
 
     public ItemStack getItem() {
@@ -136,10 +204,14 @@ class AuctionItem {
         return price;
     }
 
+    public String getPlayer() {
+        return player;
+    }
+
     /** 가격 붙은 아이템으로 변환 */
     private ItemStack createItem() {
-        final ItemMeta meta = item.getItemMeta();
-        String[] lore = {"판매자 : " + player.getName(), "가격 : " + Integer.toString(price)};
+        ItemMeta meta = item.getItemMeta();
+        String[] lore = {"판매자 : " + player, "가격 : " + Integer.toString(price)};
         // Set the lore of the item
         meta.setLore(Arrays.asList(lore));
         item.setItemMeta(meta);
@@ -176,14 +248,20 @@ class AddAuctionCommand implements CommandExecutor {
             sender.sendMessage(errorMsg);
             return false;
         }
-
+        if (price <= 0) {
+            sender.sendMessage("0원 이하로 팔 수 없습니다.");
+            return false;
+        }
         ItemStack item = ((Player)sender).getInventory().getItemInMainHand();
-        if (item == null) {
+        if (item == null || item.getType() == Material.AIR) {
             sender.sendMessage("판매할 아이템이 없습니다.");
             return false;
         }
-        AuctionItem sellItem = new AuctionItem((Player)sender, item, price);
+
+        AuctionItem sellItem = new AuctionItem(((Player)sender).getUniqueId(), ((Player)sender).getName(), item.clone(), price);
         auction.addItem(sellItem);
+        sender.sendMessage("아이템을 등록하였습니다.");
+        item.setAmount(0);
         auction.saveAuction();
         return true;
     }
@@ -198,9 +276,6 @@ public class Auction implements Listener, CommandExecutor {
     public Auction() {
         // Create a new inventory, with no owner (as this isn't a real inventory), a size of nine, called example
         inv = Bukkit.createInventory(null, 9 * 6, "경매장");
-
-        // Put the items into the inventory
-        initializeItems();
     }
     public Auction(Wallet wallet, AuctionFile auction, Dbs plugin) {
         this();
@@ -245,8 +320,9 @@ public class Auction implements Listener, CommandExecutor {
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent e) {
         if (!e.getInventory().equals(inv)) return;
-
         e.setCancelled(true);
+
+        if (e.getClickedInventory().getType() == InventoryType.PLAYER) return;
         final ItemStack clickedItem = e.getCurrentItem();
 
         // verify current item is not null
@@ -261,18 +337,22 @@ public class Auction implements Listener, CommandExecutor {
         else {
             buyItem(p, e.getSlot());
         }
+        initializeItems();
     }
 
     private void buyItem(Player player, int location) {
         AuctionItem item = auction.getAuctionItems().get(location);
-        if (player == item.getPlayer()) {
-            player.getInventory().addItem(item.getItem());
+        ItemStack sellitem = item.getItem().clone();
+        removeLore(sellitem);
+        sellitem.setAmount(1);
+        if (player.getUniqueId().equals(item.getPlayerId())) {
+            player.getInventory().addItem(sellitem);
             auction.removeItem(item);
             player.sendMessage("판매를 취소하였습니다.");
             return;
         }
         if (payMoney(player, item)) {
-            player.getInventory().addItem(item.getItem());
+            player.getInventory().addItem(sellitem);
             auction.removeItem(item);
             player.sendMessage("물건을 구매하였습니다.");
         }
@@ -284,9 +364,12 @@ public class Auction implements Listener, CommandExecutor {
     private void buyMaximum(Player player, int location) {
         AuctionItem item = auction.getAuctionItems().get(location);
         int amount = item.getamount();
-        if (player == item.getPlayer()) {
+        ItemStack sellitem = item.getItem().clone();
+        removeLore(sellitem);
+        sellitem.setAmount(1);
+        if (player.getUniqueId().equals(item.getPlayerId())) {
             while (amount > 0) {
-                player.getInventory().addItem(item.getItem());
+                player.getInventory().addItem(sellitem);
                 auction.removeItem(item);
                 amount -= 1;
             }
@@ -294,7 +377,7 @@ public class Auction implements Listener, CommandExecutor {
             return;
         }
         while (amount > 0 && payMoney(player, item)) {
-            player.getInventory().addItem(item.getItem());
+            player.getInventory().addItem(sellitem);
             auction.removeItem(item);
             amount -= 1;
         }
@@ -305,26 +388,24 @@ public class Auction implements Listener, CommandExecutor {
     private boolean payMoney(Player player, AuctionItem item) {
         UUID id = player.getUniqueId();
         int price = item.getPrice();
-        if (wallet.getGold(id) < price / 100) {
-            return false;
-        }
-        price %= 100;
-        if (wallet.getSilver(id) < price / 10) {
-            return false;
-        }
-        price %= 10;
-        if (wallet.getCopper(id) < price) {
-            return false;
-        }
+        int playerMoney = wallet.getGold(id) * 100 + wallet.getSilver(id) * 10 + wallet.getCopper(id);
+        if (price > playerMoney) return false;
         
         // 지불가능하면 지불하기
-        wallet.putGold(id, wallet.getGold(id) - (price / 100));
-        wallet.putSilver(id, wallet.getSilver(id) - (price % 100 / 10));
-        wallet.putCopper(id, wallet.getCopper(id) - (price % 100 % 10));
+        playerMoney -= price;
+        wallet.putGold(id, playerMoney / 100);
+        wallet.putSilver(id, playerMoney % 100 / 10);
+        wallet.putCopper(id, playerMoney % 100 % 10);
         PlayerScoreboard.updateScoreboard(player, wallet);
         return true;
     }
 
+    /** 판매하기 위해 Lore를 제거 */
+    private void removeLore(ItemStack item) {
+        ItemMeta meta = item.getItemMeta();
+        meta.setLore(null);
+        item.setItemMeta(meta);
+    }
 
     /** 드래그 막기 */
     @EventHandler
