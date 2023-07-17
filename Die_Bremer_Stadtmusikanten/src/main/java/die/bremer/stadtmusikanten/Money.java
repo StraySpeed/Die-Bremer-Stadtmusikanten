@@ -1,6 +1,7 @@
 package die.bremer.stadtmusikanten;
 
 import java.util.Arrays;
+import javax.annotation.Nullable;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -17,12 +18,13 @@ public abstract class Money {
     public static final ItemStack EXIT = createGuiItem(Material.ACACIA_DOOR, "나가기", "현재 메뉴를 나갑니다.");
 
     // Nice little method to create a gui item with a custom name, and description
-    protected static ItemStack createGuiItem(final Material material, final String name, final String... lore) {
+    protected static ItemStack createGuiItem(final Material material, @Nullable final String name, @Nullable final String... lore) {
         final ItemStack item = new ItemStack(material, 1);
         final ItemMeta meta = item.getItemMeta();
 
         // Set the name of the item
-        meta.setDisplayName(name);
+        if (!(name == null))
+            meta.setDisplayName(name);
 
         // Set the lore of the item
         meta.setLore(Arrays.asList(lore));

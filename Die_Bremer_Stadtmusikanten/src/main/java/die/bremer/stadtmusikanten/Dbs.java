@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Dbs extends JavaPlugin {
     private Wallet wallet = Wallet.loadWallet();
+    private AuctionFile auction = AuctionFile.loadAuction();
     /**
      * Plugin ON
      */
@@ -49,7 +50,9 @@ public class Dbs extends JavaPlugin {
     private void _loadCommands() {
         getCommand("charge").setExecutor(new ChargeCommand(wallet));
         getCommand("walletset").setExecutor(new WalletSetCommand(wallet));
-        getCommand("exchange").setExecutor(new StoreGUI(wallet, this));
+        getCommand("exchange").setExecutor(new Store(wallet, this));
+        getCommand("auction").setExecutor(new Auction(wallet, auction, this));
+        getCommand("sellat").setExecutor(new AddAuctionCommand(auction));
     }
 
     /** Events를 load */

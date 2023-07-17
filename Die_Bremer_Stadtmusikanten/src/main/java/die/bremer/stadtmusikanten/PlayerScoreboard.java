@@ -41,5 +41,6 @@ public class PlayerScoreboard {
         
         // 지갑 저장을 수행하기
         wallet.saveWallet();
+        wallet.checkWallet(player);
     }
 }

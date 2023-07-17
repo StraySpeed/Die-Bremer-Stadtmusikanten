@@ -19,7 +19,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 
-class StoreGUI implements Listener, CommandExecutor {
+public class Store implements Listener, CommandExecutor {
     private final Inventory inv;
     private Wallet wallet;
     private final ItemStack GOLD = Money.GOLD;
@@ -27,14 +27,14 @@ class StoreGUI implements Listener, CommandExecutor {
     private final ItemStack COPPER = Money.COPPER;
     private final ItemStack EXIT = Money.EXIT;
 
-    public StoreGUI() {
+    public Store() {
         // Create a new inventory, with no owner (as this isn't a real inventory), a size of nine, called example
         inv = Bukkit.createInventory(null, 9, "은행");
 
         // Put the items into the inventory
         initializeItems();
     }
-    public StoreGUI(Wallet wallet, Dbs plugin) {
+    public Store(Wallet wallet, Dbs plugin) {
         this();
         this.wallet = wallet;
         Bukkit.getPluginManager().registerEvents(this, plugin);

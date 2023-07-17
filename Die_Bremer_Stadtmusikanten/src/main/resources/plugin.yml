@@ -24,6 +24,14 @@ commands:
     #usage: /walletset <player> <gold|silver|copper|all> <value>
     aliases: [환전]
 
+  auction:
+    description: 경매장을 여는 커맨드
+    aliases: [경매, 경매장]
+
+  sellat:
+    description: 경매장에 물건을 파는 커맨드
+    aliases: [판매]
+
 permissions:
   operator.*:
     description: operator wildcard

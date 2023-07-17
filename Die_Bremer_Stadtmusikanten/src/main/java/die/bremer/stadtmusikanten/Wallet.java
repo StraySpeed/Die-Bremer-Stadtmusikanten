@@ -16,7 +16,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
-
 public class Wallet implements Serializable {
     /** 지갑 파일 이름 */
     static final private String fileName = "Wallet.ser";
@@ -90,6 +89,19 @@ public class Wallet implements Serializable {
         } catch (IOException e) {
         }
     }
+
+    /** 금화/은화/동화를 확인하고 올림하는 method */
+    public void checkWallet(Player player) {
+        UUID id = player.getUniqueId();
+        while (getCopper(id) / 10 > 0) {
+            putCopper(id, getCopper(id) - 10);
+            putSilver(id, getSilver(id) + 1);
+        }
+        while (getSilver(id) / 10 > 0) {
+            putSilver(id, getSilver(id) - 10);
+            putGold(id, getGold(id) + 1);
+        }
+    }
 }
 
 class ChargeCommand implements CommandExecutor{
@@ -109,9 +121,9 @@ class ChargeCommand implements CommandExecutor{
             }
 
             UUID id = player.getUniqueId(); // ID 가져오기
-            wallet.putGold(id, wallet.getGold(id) + 10);
-            wallet.putSilver(id, wallet.getSilver(id) + 10);
-            wallet.putCopper(id, wallet.getCopper(id) + 10);
+            wallet.putGold(id, wallet.getGold(id) + 5);
+            wallet.putSilver(id, wallet.getSilver(id) + 5);
+            wallet.putCopper(id, wallet.getCopper(id) + 5);
             
             player.sendMessage("금액이 충전되었습니다.");    //사용자에게 메시지 발신
             PlayerScoreboard.updateScoreboard(player, wallet);
