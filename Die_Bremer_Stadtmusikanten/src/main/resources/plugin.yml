@@ -2,7 +2,7 @@ name: Die_Bremer_Stadtmusikanten   #플러그인 이름
 version: 1.0        #플러그인 버전
 main: die.bremer.stadtmusikanten.Dbs   #플러그인 패키지 이름.진입점 클래스 이름
 author: StraySpeed
-api-version: '1.16'
+api-version: '1.18'
 
 commands:
   charge:

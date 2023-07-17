@@ -12,7 +12,7 @@ public abstract class Money {
     /** 은화 ItemStack */
     public static final ItemStack SILVER = createGuiItem(Material.IRON_INGOT, "§7[은화]", "빛나는 §7은화", "화폐로 사용됩니다.");
     /** 동화 ItemStack */
-    public static final ItemStack COPPER = createGuiItem(Material.LAPIS_LAZULI, "§6[동화]", "빛나는 §6동화", "화폐로 사용됩니다.");
+    public static final ItemStack COPPER = createGuiItem(Material.COPPER_INGOT, "§6[동화]", "빛나는 §6동화", "화폐로 사용됩니다.");
     /** 나가기 ItemStack */
     public static final ItemStack EXIT = createGuiItem(Material.ACACIA_DOOR, "나가기", "현재 메뉴를 나갑니다.");
 
