@@ -249,12 +249,12 @@ class AddAuctionCommand implements CommandExecutor {
             return false;
         }
         if (price <= 0) {
-            sender.sendMessage("0원 이하로 팔 수 없습니다.");
+            sender.sendMessage("§c0원 이하로 팔 수 없습니다.");
             return false;
         }
         ItemStack item = ((Player)sender).getInventory().getItemInMainHand();
         if (item == null || item.getType() == Material.AIR) {
-            sender.sendMessage("판매할 아이템이 없습니다.");
+            sender.sendMessage("§c판매할 아이템이 없습니다.");
             return false;
         }
 
@@ -355,9 +355,13 @@ public class Auction implements Listener, CommandExecutor {
             player.getInventory().addItem(sellitem);
             auction.removeItem(item);
             player.sendMessage("물건을 구매하였습니다.");
+            UUID sellerId = item.getPlayerId();
+            Player seller = Bukkit.getPlayer(sellerId);
+            if (seller.isOnline())
+                seller.sendMessage("§7경매장 물건이 판매되었습니다.");
         }
         else {
-            player.sendMessage("금액이 부족합니다.");
+            player.sendMessage("§c금액이 부족합니다.");
         }
     }
 
@@ -382,6 +386,10 @@ public class Auction implements Listener, CommandExecutor {
             amount -= 1;
         }
         player.sendMessage("최대 개수를 구매했습니다.");
+        UUID sellerId = item.getPlayerId();
+        Player seller = Bukkit.getPlayer(sellerId);
+        if (seller.isOnline())
+            seller.sendMessage("§7경매장 물건이 판매되었습니다.");
         return;
     }
 
@@ -396,7 +404,16 @@ public class Auction implements Listener, CommandExecutor {
         wallet.putGold(id, playerMoney / 100);
         wallet.putSilver(id, playerMoney % 100 / 10);
         wallet.putCopper(id, playerMoney % 100 % 10);
+
+        // 지불한 만큼 판매자에게 더하기
+        UUID sellerId = item.getPlayerId();
+        Player seller = Bukkit.getPlayer(sellerId);
+        wallet.putGold(sellerId, wallet.getGold(sellerId) + price / 100);
+        wallet.putSilver(sellerId, wallet.getSilver(sellerId) + price % 100 / 10);
+        wallet.putCopper(sellerId, wallet.getCopper(sellerId) + price % 100 % 10);
+
         PlayerScoreboard.updateScoreboard(player, wallet);
+        PlayerScoreboard.updateScoreboard(seller, wallet);
         return true;
     }
 
