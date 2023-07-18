@@ -357,7 +357,7 @@ public class Auction implements Listener, CommandExecutor {
             player.sendMessage("물건을 구매하였습니다.");
             UUID sellerId = item.getPlayerId();
             Player seller = Bukkit.getPlayer(sellerId);
-            if (seller.isOnline())
+            if (seller != null)
                 seller.sendMessage("§7경매장 물건이 판매되었습니다.");
         }
         else {
@@ -388,7 +388,7 @@ public class Auction implements Listener, CommandExecutor {
         player.sendMessage("최대 개수를 구매했습니다.");
         UUID sellerId = item.getPlayerId();
         Player seller = Bukkit.getPlayer(sellerId);
-        if (seller.isOnline())
+        if (seller != null)
             seller.sendMessage("§7경매장 물건이 판매되었습니다.");
         return;
     }
@@ -408,12 +408,14 @@ public class Auction implements Listener, CommandExecutor {
         // 지불한 만큼 판매자에게 더하기
         UUID sellerId = item.getPlayerId();
         Player seller = Bukkit.getPlayer(sellerId);
+
         wallet.putGold(sellerId, wallet.getGold(sellerId) + price / 100);
         wallet.putSilver(sellerId, wallet.getSilver(sellerId) + price % 100 / 10);
         wallet.putCopper(sellerId, wallet.getCopper(sellerId) + price % 100 % 10);
 
         PlayerScoreboard.updateScoreboard(player, wallet);
-        PlayerScoreboard.updateScoreboard(seller, wallet);
+        if (seller != null)
+            PlayerScoreboard.updateScoreboard(seller, wallet);
         return true;
     }
 
