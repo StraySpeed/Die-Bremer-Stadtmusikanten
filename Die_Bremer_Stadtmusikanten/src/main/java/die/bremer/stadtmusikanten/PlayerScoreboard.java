@@ -16,6 +16,7 @@ public class PlayerScoreboard {
         UUID id = player.getUniqueId();
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard board = manager.getNewScoreboard();
+        wallet.checkWallet(player);
         // 스코어보드 한 번 초기화하기
         player.setScoreboard(manager.getNewScoreboard());
 
@@ -41,6 +42,5 @@ public class PlayerScoreboard {
         
         // 지갑 저장을 수행하기
         wallet.saveWallet();
-        wallet.checkWallet(player);
     }
 }
